@@ -55,7 +55,8 @@ end
 -- por Core/Components/Theme, que retornam function(Library) ... end)
 local function importInjected(relativePath, ...)
     local chunk = fetch(relativePath)
-    return chunk(...)
+    local moduleFactory = chunk()
+    return moduleFactory(...)
 end
 
 -- Executa um módulo remoto "puro" (sem receber Library), usado por Utility
