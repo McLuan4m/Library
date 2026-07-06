@@ -39,7 +39,13 @@ local function fetch(relativePath)
     local url = BASE_URL .. relativePath
     local ok, source = pcall(game.HttpGet, game, url)
     if not ok then
-        error(("[Library] Falha ao baixar módulo '%s': %s"):format(relativePath, tostring(source)))
+        error(("[Library] Falha ao baixar módulo '%s'\nURL: %s\nErro: %s"):format(relativePath, url, tostring(source)))
+    end
+
+    -- HttpGet não lança erro em 404 (a menos que a Instance esteja configurada
+    -- assim), então detectamos manualmente uma resposta de erro do GitHub.
+    if source:match("^%s*404:") or source:match("^%s*<!DOCTYPE html>") then
+        error(("[Library] Módulo '%s' não encontrado (404).\nURL testada: %s\nVerifique BASE_URL, o nome do branch e a estrutura de pastas do repositório."):format(relativePath, url))
     end
 
     local chunk, compileErr = loadstring(source, "=" .. relativePath)
@@ -52,7 +58,12 @@ local function fetch(relativePath)
 end
 
 -- Executa um módulo remoto passando `Library` como argumento (padrão usado
--- por Core/Components/Theme, que retornam function(Library) ... end)
+-- por Core/Components/Theme, que retornam function(Library) ... end).
+--
+-- IMPORTANTE: o chunk compilado, quando executado (chunk()), roda o código
+-- de nível superior do arquivo — que apenas RETORNA a função interna
+-- `function(Library) ... end`. É preciso chamar essa função retornada
+-- separadamente, passando Library, para de fato construir o módulo.
 local function importInjected(relativePath, ...)
     local chunk = fetch(relativePath)
     local moduleFactory = chunk()
