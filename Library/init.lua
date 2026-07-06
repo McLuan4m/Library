@@ -36,7 +36,7 @@ local function fetch(relativePath)
         return _cache[relativePath]
     end
 
-    local url = BASE_URL .. relativePath
+    local url = BASE_URL .. relativePath .. "?v=" .. tostring(math.random(1, 1e9))
     local ok, source = pcall(game.HttpGet, game, url)
     if not ok then
         error(("[Library] Falha ao baixar módulo '%s'\nURL: %s\nErro: %s"):format(relativePath, url, tostring(source)))
