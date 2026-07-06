@@ -26,7 +26,7 @@ local HttpService = game:GetService("HttpService")
 -- CONFIGURAÇÃO DO LOADER
 -- =========================================================================
 
-local BASE_URL = "https://raw.githubusercontent.com/McLuan4m/Library/refs/heads/main/Library/init.lua"
+local BASE_URL = "https://raw.githubusercontent.com/McLuan4m/Library/main/Library/"
 
 -- Cache simples para evitar buscar o mesmo módulo duas vezes na mesma sessão
 local _cache = {}
